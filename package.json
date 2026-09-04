@@ -1,54 +1,11 @@
-const { Client, GatewayIntentBits } = require("discord.js");
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers
-  ]
-});
-
-client.once("ready", async () => {
-  console.log(`Logged in as ${client.user.tag}`);
-
-  const guildId = process.env.GUILD_ID;
-
-  if (!guildId) {
-    console.error("GUILD_ID is missing.");
-    process.exit(1);
+{
+  "name": "discord-cleanup-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.22.1"
   }
-
-  try {
-    const guild = await client.guilds.fetch(guildId);
-    const members = await guild.members.fetch();
-
-    console.log(`Found ${members.size} members.`);
-
-    let banned = 0;
-    let failed = 0;
-
-    for (const member of members.values()) {
-      // Don't ban the bot itself
-      if (member.id === client.user.id) continue;
-
-      try {
-        await member.ban({
-          reason: "Server-wide cleanup"
-        });
-
-        banned++;
-        console.log(`Banned ${member.user.tag}`);
-      } catch (error) {
-        failed++;
-        console.log(
-          `Failed to ban ${member.user.tag}: ${error.message}`
-        );
-      }
-    }
-
-    console.log(`Finished. Banned: ${banned}, Failed: ${failed}`);
-  } catch (error) {
-    console.error("Cleanup error:", error);
-  }
-});
-
-client.login(process.env.DISCORD_TOKEN);
+}
